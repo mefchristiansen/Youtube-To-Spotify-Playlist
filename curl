@@ -1,0 +1,5 @@
+curl \
+  'https://www.googleapis.com/youtube/v3/videos?part=snippet%2CcontentDetails%2Cstatistics&myRating=like&key=AIzaSyDgwhC2BJI1tIw1mBwHUBeZNcHFNZ16BRY' \
+  --header 'Authorization: Bearer ya29.a0AfH6SMA0Tic4hHaTH5Vh4z2B3B-y1Si3KJxSdTQCMdRJ_99jYp4A0zmB2INpDN7RJL9sSmEePupM7p62mVD7AjaEvnXlLU6Cu1bYaCaL3MHjcjiSIONdYzfk-O4S8jbC_753aNsij8S9dbuwjg06DQZ-msv6gT8O1No' \
+  --header 'Accept: application/json' \
+  --compressed

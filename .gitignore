@@ -1,3 +1,4 @@
 YoutubeToSpotifyEnv/
 __pycache__/
 config.yml
+.envrc
