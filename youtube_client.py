@@ -6,6 +6,8 @@ import googleapiclient.errors
 from google.auth.transport.requests import Request
 from google.oauth2.credentials import Credentials
 
+from youtube_dl import YoutubeDL
+
 class YoutubeClient:
     def __init__(self):
         self.api_service_name = "youtube"
@@ -54,3 +56,32 @@ class YoutubeClient:
             self.api_version,
             credentials=self.credentials
         )
+
+    def get_liked_videos(self):
+        request = self.client.videos().list(
+            part="snippet,contentDetails,statistics",
+            myRating="like"
+        )
+
+        return request.execute()
+
+    def get_valid_songs(self):
+        response = self.get_liked_videos()
+
+        valid_songs = {}
+
+        for item in response["items"]:
+            title = item["snippet"]["title"]
+            youtube_url = "https://www.youtube.com/watch?v={}".format(item["id"])
+
+            video = YoutubeDL({}).extract_info(youtube_url, download=False)
+            song_name = video["track"]
+            artist = video["artist"]
+
+            if song_name and artist:
+                valid_songs[title] = {
+                    "song_name": song_name,
+                    "artist": artist
+                }
+
+        return valid_songs

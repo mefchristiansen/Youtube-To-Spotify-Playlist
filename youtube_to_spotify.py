@@ -13,14 +13,6 @@ def main():
 
     return
 
-def get_liked_videos(youtube_client):
-    request = youtube_client.videos().list(
-        part="snippet,contentDetails,statistics",
-        myRating="like"
-    )
-
-    response = request.execute()
-
 
 
 
