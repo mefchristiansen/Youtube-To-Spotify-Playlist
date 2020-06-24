@@ -1,67 +1,55 @@
 import os
 
-import yaml
-
-try:
-    from yaml import CLoader as Loader
-except ImportError:
-    from yaml import Loader
-
-with open("config.yml", 'r') as ymlfile:
-    config = yaml.load(ymlfile, Loader=Loader)
+import json
 
 import boto3
 
 scopes = ["https://www.googleapis.com/auth/youtube.readonly"]
 
-import google_auth_oauthlib.flow
-import googleapiclient.discovery
+from google_auth_oauthlib.flow import Flow
+from googleapiclient.discovery import build
 import googleapiclient.errors
+from google.auth.transport.requests import Request
+from google.oauth2.credentials import Credentials
 
 def main():
+    if not os.path.isfile('secrets.json'):
+        return
+
+    with open('secrets.json') as f:
+        secrets = json.load(f)
+
+    youtube_client = init_youtube_client(secrets["youtube"])
     return
 
-    API_KEY="AIzaSyDgwhC2BJI1tIw1mBwHUBeZNcHFNZ16BRY"
-    channel_id = "UCbXgNpp0jedKWcQiULLbDTA"
-    url = f'https://www.googleapis.com/youtube/v3/channels?part=statistics&id={channel_id}&key={API_KEY}'
-
-    # url = f'https://www.googleapis.com/youtube/v3/channels?part=statistics&id={self.channel_id}&key={self.api_key}'
-
-def init_youtube_client():
-
-    if os.getenv('ENV') == "development":
-        os.environ["OAUTHLIB_INSECURE_TRANSPORT"] = "1"
-
+def init_youtube_client(youtube_tokens):
     api_service_name = "youtube"
     api_version = "v3"
-    client_secrets_file = "client_secret.json"
 
-    # Get credentials and create an API client
-    flow = google_auth_oauthlib.flow.InstalledAppFlow.from_client_secrets_file(client_secrets_file, scopes)
+    credentials = Credentials(
+        youtube_tokens['access_token'],
+        refresh_token=youtube_tokens['refresh_token'],
+        token_uri=youtube_tokens['token_uri'],
+        client_id=youtube_tokens['client_id'],
+        client_secret=youtube_tokens['client_secret']
+    )
 
-    auth_url, _ = flow.authorization_url(prompt='consent')
-    print('Please go to this URL: {}'.format(auth_url))
-    code = 
-    flow.fetch_token(code=code)
+    return build(api_service_name, api_version, credentials=credentials)
 
-    credentials = flow.credentials
-
-    youtube = googleapiclient.discovery.build(api_service_name, api_version, credentials=credentials)
-
-    request = youtube.videos().list(
+def get_liked_videos(youtube_client):
+    request = youtube_client.videos().list(
         part="snippet,contentDetails,statistics",
         myRating="like"
     )
 
     response = request.execute()
 
-    print("HELLO")
+# def refresh():
+#     credentials.refresh(Request())
 
-    print(response)
 
-def refresh():
-    request = google.auth.transport.requests.Request()
-    credentials.refresh(request)
+if __name__ == "__main__":
+    main()
 
 
 
