@@ -11,6 +11,10 @@ def main():
     youtube_client = YoutubeClient()
     spotify_client = SpotifyClient()
 
+    # Get Youtube Valid Songs
+
+    # Get Spotify Playlist
+
     return
 
 

@@ -3,6 +3,8 @@ import os, json
 import spotipy
 from spotipy import oauth2
 
+from urllib.error import HTTPError
+
 class SpotifyClient:
     def __init__(self):
         self.scope = "playlist-modify-public"
@@ -40,4 +42,33 @@ class SpotifyClient:
             json.dump(spotify_tokens, f)
 
         self.client= spotipy.Spotify(auth=token_info["access_token"])
+
+    def get_playlist(self):
+        if not os.path.isfile('spotify_secrets.json'):
+            return
+
+        with open('spotify_secrets.json') as f:
+            spotify_tokens = json.load(f)
+
+        playlist_id = spotify_tokens["playlist_id"]
+
+        if playlist_id:
+            try:
+                playlist = self.client.playlist(playlist_id)
+                return playlist['id']
+            except HTTPError:
+                return self.create_playlist()
+        else:
+            return self.create_playlist()
+
+    def create_playlist(self):
+        user_id = self.client.me()['id']
+
+        response = self.client.user_playlist_create(
+            user=user_id, 
+            name="Youtube Liked Songs",
+            public=True,
+            description="My Youtube liked songs"
+        )
         
+        return response["id"]
