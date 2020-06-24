@@ -80,7 +80,7 @@ class YoutubeClient:
 
             if song_name and artist:
                 valid_songs[title] = {
-                    "song_name": song_name,
+                    "title": song_name,
                     "artist": artist
                 }
 

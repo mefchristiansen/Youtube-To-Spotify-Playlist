@@ -1,4 +1,5 @@
 import os, json
+import urllib.parse
 
 import spotipy
 from spotipy import oauth2
@@ -70,5 +71,49 @@ class SpotifyClient:
             public=True,
             description="My Youtube liked songs"
         )
+
+        if not os.path.isfile('spotify_secrets.json'):
+            return
+
+        with open('spotify_secrets.json') as f:
+            spotify_tokens = json.load(f)
         
-        return response["id"]
+        spotify_tokens["playlist_id"] = response["id"]
+
+        with open('spotify_secrets.json', 'w') as f:
+            json.dump(spotify_tokens, f)
+
+        return spotify_tokens["playlist_id"]
+
+    def add_songs_to_playlist(self, songs, playlist_id):
+        if not songs:
+            return
+
+        track_ids = []
+
+        for song in songs.values():
+            search_results = self.client.search(self.format_query(song["title"], song["artist"]))
+
+            tracks = search_results["tracks"]["items"]
+
+            if not tracks:
+                continue
+
+            track_ids.append(tracks[0]["ids"])
+
+        if not track_ids:
+            return
+
+        user_id = self.client.me()['id']
+
+        self.client.user_playlist_add_tracks(
+            user_id,
+            playlist_id,
+            track_ids
+        )
+
+    def format_query(self, title, artist):
+        return "{track} artist:{artist}".format(
+            track = title,
+            artist = artist
+        )
