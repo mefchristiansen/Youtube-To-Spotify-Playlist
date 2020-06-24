@@ -12,20 +12,24 @@ import googleapiclient.errors
 from google.auth.transport.requests import Request
 from google.oauth2.credentials import Credentials
 
+import spotipy
+
 def main():
-    if not os.path.isfile('secrets.json'):
-        return
+    youtube_client = init_youtube_client()
+    spotify_client = init_spotify_client()
 
-    with open('secrets.json') as f:
-        secrets = json.load(f)
-
-    youtube_client = init_youtube_client(secrets["youtube"])
     return
 
-def init_youtube_client(youtube_tokens):
+def init_youtube_client():
+    if not os.path.isfile('youtube_secrets.json'):
+        return
+
+    with open('youtube_secrets.json') as f:
+        youtube_tokens = json.load(f)
+
     api_service_name = "youtube"
     api_version = "v3"
-
+    
     credentials = Credentials(
         youtube_tokens['access_token'],
         refresh_token=youtube_tokens['refresh_token'],
@@ -35,6 +39,15 @@ def init_youtube_client(youtube_tokens):
     )
 
     return build(api_service_name, api_version, credentials=credentials)
+
+def init_spotify_client():
+    if not os.path.isfile('spotify_secrets.json'):
+        return
+
+    with open('spotify_secrets.json') as f:
+        spotify_tokens = json.load(f)
+
+    return spotipy.Spotify(auth=spotify_tokens["access_token"])
 
 def get_liked_videos(youtube_client):
     request = youtube_client.videos().list(
