@@ -89,19 +89,30 @@ class SpotifyClient:
         if not songs:
             return
 
-        track_ids = []
+        track_uris = []
+        existing_track_uris = self.get_existing_tracks(playlist_id)
 
         for song in songs.values():
-            search_results = self.client.search(self.format_query(song["title"], song["artist"]))
+            search_results = self.client.search(
+                self.format_query(
+                    song["title"],
+                    song["artist"]
+                )
+            )
 
             tracks = search_results["tracks"]["items"]
 
             if not tracks:
                 continue
 
-            track_ids.append(tracks[0]["ids"])
+            track_uri = tracks[0]["uri"]
 
-        if not track_ids:
+            if track_uri in existing_track_uris:
+                continue
+
+            track_uris.append(track_uri)
+
+        if not track_uris:
             return
 
         user_id = self.client.me()['id']
@@ -109,7 +120,7 @@ class SpotifyClient:
         self.client.user_playlist_add_tracks(
             user_id,
             playlist_id,
-            track_ids
+            track_uris
         )
 
     def format_query(self, title, artist):
@@ -117,3 +128,22 @@ class SpotifyClient:
             track = title,
             artist = artist
         )
+
+    def get_existing_tracks(self, playlist_id):
+        track_uris = []
+        user_id = self.client.me()['id']
+
+        playlist = self.client.user_playlist(
+            user_id,
+            playlist_id
+        )
+
+        while playlist:
+            for track in playlist["tracks"]["items"]:
+                track_uris.append(track["track"]['uri'])
+            if playlist["tracks"]["next"]:
+                playlist = self.client.next(playlist["tracks"])
+            else:
+                playlist = None
+
+        return track_uris
