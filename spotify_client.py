@@ -1,10 +1,9 @@
-import os, json
-import urllib.parse
+import os, json, pickle
 
 import spotipy
 from spotipy import oauth2
 
-from urllib.error import HTTPError
+import constants
 
 class SpotifyClient:
     def __init__(self):
@@ -12,19 +11,12 @@ class SpotifyClient:
         self.sp_oauth = self.init_spotify_oauth()
         self.client = self.init_spotify_client()
 
-    def init_spotify_credentials(self):
-        if not os.path.isfile('spotify_secrets.json'):
+    def init_spotify_oauth(self):
+        if not os.path.isfile(constants.SPOTIFY_AUTH_PICKLE):
             return
 
-        with open('spotify_secrets.json') as f:
-            spotify_tokens = json.load(f)
-
-        return oauth2.SpotifyOAuth(
-            client_id=spotify_tokens["client_id"],
-            client_secret=spotify_tokens["client_secret"],
-            redirect_uri=spotify_tokens["redirect_uri"],
-            scope=self.scope
-        )
+        with open(constants.SPOTIFY_AUTH_PICKLE) as creds:
+            return pickle.load(creds)
 
     def init_spotify_client(self):
         if not os.path.isfile('spotify_secrets.json'):
@@ -52,7 +44,7 @@ class SpotifyClient:
         with open('spotify_secrets.json', 'w') as f:
             json.dump(spotify_tokens, f)
 
-        self.client= spotipy.Spotify(auth=token_info["access_token"])
+        self.client = spotipy.Spotify(auth=token_info["access_token"])
 
     def get_playlist(self):
         if not os.path.isfile('spotify_secrets.json'):
