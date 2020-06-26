@@ -57,24 +57,31 @@ class YoutubeClient:
             credentials=self.credentials
         )
 
-    def get_liked_videos(self):
+    def get_liked_videos(self, pageToken = None):
         request = self.client.videos().list(
-            part="snippet,contentDetails,statistics",
-            myRating="like"
+            part="snippet",
+            maxResults=10,
+            myRating="like",
+            pageToken=pageToken,
+            fields="items(id,snippet.title),nextPageToken"
         )
 
         return request.execute()
 
-    def get_valid_songs(self):
-        response = self.get_liked_videos()
-
+    def get_valid_songs(self, response):
         valid_songs = {}
 
         for item in response["items"]:
             title = item["snippet"]["title"]
-            youtube_url = "https://www.youtube.com/watch?v={}".format(item["id"])
+            youtube_url = "https://www.youtube.com/watch?v={}".format(
+                item["id"]
+            )
 
-            video = YoutubeDL({}).extract_info(youtube_url, download=False)
+            try:
+                video = YoutubeDL({}).extract_info(youtube_url, download=False)
+            except:
+                continue
+
             song_name = video["track"]
             artist = video["artist"]
 

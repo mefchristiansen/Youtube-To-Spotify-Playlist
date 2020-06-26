@@ -6,7 +6,8 @@ from googleapiclient.discovery import build
 from spotipy import oauth2
 
 def main():
-    set_up_youtube_tokens()
+    # set_up_youtube_tokens()
+    set_up_spotify_token()
 
 def set_up_youtube_tokens():
     client_secrets_file = "client_secret.json"

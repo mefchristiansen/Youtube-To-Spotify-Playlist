@@ -9,7 +9,22 @@ from urllib.error import HTTPError
 class SpotifyClient:
     def __init__(self):
         self.scope = "playlist-modify-public"
-        self.client = self.init_spotify_client()        
+        self.sp_oauth = self.init_spotify_oauth()
+        self.client = self.init_spotify_client()
+
+    def init_spotify_credentials(self):
+        if not os.path.isfile('spotify_secrets.json'):
+            return
+
+        with open('spotify_secrets.json') as f:
+            spotify_tokens = json.load(f)
+
+        return oauth2.SpotifyOAuth(
+            client_id=spotify_tokens["client_id"],
+            client_secret=spotify_tokens["client_secret"],
+            redirect_uri=spotify_tokens["redirect_uri"],
+            scope=self.scope
+        )
 
     def init_spotify_client(self):
         if not os.path.isfile('spotify_secrets.json'):
@@ -27,14 +42,9 @@ class SpotifyClient:
         with open('spotify_secrets.json') as f:
             spotify_tokens = json.load(f)
 
-        sp_oauth = oauth2.SpotifyOAuth(
-            client_id=spotify_tokens["client_id"],
-            client_secret=spotify_tokens["client_secret"],
-            redirect_uri=spotify_tokens["redirect_uri"],
-            scope=self.scope
+        token_info = self.sp_oauth.refresh_access_token(
+            spotify_tokens['refresh_token']
         )
-
-        token_info = sp_oauth.refresh_access_token(spotify_tokens['refresh_token'])
 
         spotify_tokens["access_token"] = token_info["access_token"]
         spotify_tokens["refresh_token"] = token_info["refresh_token"]
@@ -85,12 +95,11 @@ class SpotifyClient:
 
         return spotify_tokens["playlist_id"]
 
-    def add_songs_to_playlist(self, songs, playlist_id):
+    def add_songs_to_playlist(self, songs, playlist_id, existing_track_uris):
         if not songs:
             return
 
         track_uris = []
-        existing_track_uris = self.get_existing_tracks(playlist_id)
 
         for song in songs.values():
             search_results = self.client.search(
@@ -108,6 +117,7 @@ class SpotifyClient:
             track_uri = tracks[0]["uri"]
 
             if track_uri in existing_track_uris:
+                print("Track already in playlist")
                 continue
 
             track_uris.append(track_uri)
