@@ -19,12 +19,16 @@ def main():
     # Get uris of tracks already in the Spotify playlist
     existing_track_uris = spotify_client.get_existing_tracks(playlist_id)
 
+    # Get recent video id
+    recent_video_id = youtube_client.get_recent_video_id()
+    recent_video_id_updated = False
+
     # Get first page of Youtube liked videos
     res = youtube_client.get_liked_videos()
 
     while res:
         # Get Youtube Valid Songs
-        songs = youtube_client.get_valid_songs(res)
+        songs, already_processed = youtube_client.get_valid_songs(res, recent_video_id)
 
         # Add songs to playlist
         try:
@@ -44,7 +48,11 @@ def main():
                 print(err)
                 break
 
-        if 'nextPageToken' not in res:
+        if not recent_video_id_updated:
+            youtube_client.store_recent_video_id(res["items"][0]["id"])
+            recent_video_id_updated = True
+
+        if already_processed or 'nextPageToken' not in res:
             break
 
         # Get next page of liked Youtube videos

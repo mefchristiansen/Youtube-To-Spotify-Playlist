@@ -26,26 +26,26 @@ class SpotifyClient:
             return
 
         with open(constants.SPOTIFY_SECRETS) as f:
-            spotify_tokens = json.load(f)
+            spotify_secrets = json.load(f)
 
-        return spotipy.Spotify(auth=spotify_tokens["access_token"])
+        return spotipy.Spotify(auth=spotify_secrets["access_token"])
 
     def refresh(self):
         if not os.path.isfile(constants.SPOTIFY_SECRETS):
             return
 
         with open(constants.SPOTIFY_SECRETS) as f:
-            spotify_tokens = json.load(f)
+            spotify_secrets = json.load(f)
 
         token_info = self.sp_oauth.refresh_access_token(
-            spotify_tokens['refresh_token']
+            spotify_secrets['refresh_token']
         )
 
-        spotify_tokens["access_token"] = token_info["access_token"]
-        spotify_tokens["refresh_token"] = token_info["refresh_token"]
+        spotify_secrets["access_token"] = token_info["access_token"]
+        spotify_secrets["refresh_token"] = token_info["refresh_token"]
 
         with open(constants.SPOTIFY_SECRETS, 'w') as f:
-            json.dump(spotify_tokens, f)
+            json.dump(spotify_secrets, f)
 
         self.client = spotipy.Spotify(auth=token_info["access_token"])
 
@@ -54,9 +54,9 @@ class SpotifyClient:
             return
 
         with open(constants.SPOTIFY_SECRETS) as f:
-            spotify_tokens = json.load(f)
+            spotify_secrets = json.load(f)
 
-        playlist_id = spotify_tokens["playlist_id"]
+        playlist_id = spotify_secrets["playlist_id"]
 
         if playlist_id:
             try:
@@ -81,14 +81,14 @@ class SpotifyClient:
             return
 
         with open(constants.SPOTIFY_SECRETS) as f:
-            spotify_tokens = json.load(f)
+            spotify_secrets = json.load(f)
         
-        spotify_tokens["playlist_id"] = response["id"]
+        spotify_secrets["playlist_id"] = response["id"]
 
         with open(constants.SPOTIFY_SECRETS, 'w') as f:
-            json.dump(spotify_tokens, f)
+            json.dump(spotify_secrets, f)
 
-        return spotify_tokens["playlist_id"]
+        return spotify_secrets["playlist_id"]
 
     def add_songs_to_playlist(self, songs, playlist_id, existing_track_uris):
         if not songs:
@@ -96,7 +96,7 @@ class SpotifyClient:
 
         track_uris = []
 
-        for song in songs.values():
+        for song in songs:
             search_results = self.client.search(
                 self.format_query(
                     song["title"],

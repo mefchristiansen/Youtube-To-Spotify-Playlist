@@ -35,16 +35,20 @@ class YoutubeClient:
     def refresh(self):
         self.credentials.refresh(Request())
 
-        youtube_tokens = {
-            "access_token": self.credentials.token,
-            "refresh_token": self.credentials.refresh_token
-        }
+        if not os.path.isfile(constants.YOUTUBE_SECRETS):
+            return
+
+        with open(constants.YOUTUBE_SECRETS) as f:
+            youtube_secrets = json.load(f)
+
+        youtube_secrets["access_token"] = self.credentials.token
+        youtube_secrets["refresh_token"] = self.credentials.refresh_token
 
         with open(constants.YOUTUBE_AUTH_PICKLE, "wb") as creds:
             pickle.dump(self.credentials, creds)
 
         with open(constants.YOUTUBE_SECRETS, "w") as secrets:
-            json.dump(youtube_tokens, secrets)
+            json.dump(youtube_secrets, secrets)
 
         self.client = build(
             self.api_service_name,
@@ -63,11 +67,15 @@ class YoutubeClient:
 
         return request.execute()
 
-    def get_valid_songs(self, response):
-        valid_songs = {}
+    def get_valid_songs(self, response, recent_video_id):
+        valid_songs = []
+        already_processed = False
 
-        for item in response["items"]:
-            title = item["snippet"]["title"]
+        for item in response["items"]:            
+            if item["id"] == recent_video_id:
+                already_processed = True
+                break
+
             youtube_url = "https://www.youtube.com/watch?v={}".format(
                 item["id"]
             )
@@ -81,9 +89,30 @@ class YoutubeClient:
             artist = video["artist"]
 
             if song_name and artist:
-                valid_songs[title] = {
+                valid_songs.append ({
                     "title": song_name,
                     "artist": artist
-                }
+                })
 
-        return valid_songs
+        return valid_songs, already_processed
+
+    def store_recent_video_id(self, video_id):
+        if not os.path.isfile(constants.YOUTUBE_SECRETS):
+            return
+
+        with open(constants.YOUTUBE_SECRETS) as f:
+            youtube_secrets = json.load(f)
+        
+        youtube_secrets["recent_video_id"] = video_id
+
+        with open(constants.YOUTUBE_SECRETS, "w") as secrets:
+            json.dump(youtube_secrets, secrets)
+
+    def get_recent_video_id(self):
+        if not os.path.isfile(constants.YOUTUBE_SECRETS):
+            return
+
+        with open(constants.YOUTUBE_SECRETS) as f:
+            youtube_secrets = json.load(f)
+
+        return youtube_secrets.get("recent_video_id")
