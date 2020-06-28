@@ -1,5 +1,7 @@
 import os, json, pickle
 
+from urllib.error import HTTPError
+
 import spotipy
 from spotipy import oauth2
 
@@ -13,25 +15,26 @@ class SpotifyClient:
 
     def init_spotify_oauth(self):
         if not os.path.isfile(constants.SPOTIFY_AUTH_PICKLE):
+            print("[ERROR] Spotify auth pickle file does exist. Please run the set up script (set_up.py) first.")
             return
 
-        with open(constants.SPOTIFY_AUTH_PICKLE) as creds:
+        with open(constants.SPOTIFY_AUTH_PICKLE, "rb") as creds:
             return pickle.load(creds)
 
     def init_spotify_client(self):
-        if not os.path.isfile('spotify_secrets.json'):
+        if not os.path.isfile(constants.SPOTIFY_SECRETS):
             return
 
-        with open('spotify_secrets.json') as f:
+        with open(constants.SPOTIFY_SECRETS) as f:
             spotify_tokens = json.load(f)
 
         return spotipy.Spotify(auth=spotify_tokens["access_token"])
 
     def refresh(self):
-        if not os.path.isfile('spotify_secrets.json'):
+        if not os.path.isfile(constants.SPOTIFY_SECRETS):
             return
 
-        with open('spotify_secrets.json') as f:
+        with open(constants.SPOTIFY_SECRETS) as f:
             spotify_tokens = json.load(f)
 
         token_info = self.sp_oauth.refresh_access_token(
@@ -41,16 +44,16 @@ class SpotifyClient:
         spotify_tokens["access_token"] = token_info["access_token"]
         spotify_tokens["refresh_token"] = token_info["refresh_token"]
 
-        with open('spotify_secrets.json', 'w') as f:
+        with open(constants.SPOTIFY_SECRETS, 'w') as f:
             json.dump(spotify_tokens, f)
 
         self.client = spotipy.Spotify(auth=token_info["access_token"])
 
     def get_playlist(self):
-        if not os.path.isfile('spotify_secrets.json'):
+        if not os.path.isfile(constants.SPOTIFY_SECRETS):
             return
 
-        with open('spotify_secrets.json') as f:
+        with open(constants.SPOTIFY_SECRETS) as f:
             spotify_tokens = json.load(f)
 
         playlist_id = spotify_tokens["playlist_id"]
@@ -74,15 +77,15 @@ class SpotifyClient:
             description="My Youtube liked songs"
         )
 
-        if not os.path.isfile('spotify_secrets.json'):
+        if not os.path.isfile(constants.SPOTIFY_SECRETS):
             return
 
-        with open('spotify_secrets.json') as f:
+        with open(constants.SPOTIFY_SECRETS) as f:
             spotify_tokens = json.load(f)
         
         spotify_tokens["playlist_id"] = response["id"]
 
-        with open('spotify_secrets.json', 'w') as f:
+        with open(constants.SPOTIFY_SECRETS, 'w') as f:
             json.dump(spotify_tokens, f)
 
         return spotify_tokens["playlist_id"]

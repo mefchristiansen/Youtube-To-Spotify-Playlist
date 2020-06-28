@@ -12,7 +12,7 @@ def main():
     set_up_spotify_token()
 
 def set_up_youtube_tokens():
-    client_secrets_file = "youtube_client_secret.json"
+    client_secrets_file = constants.YOUTUBE_CLIENT_SECRETS
     scopes = ["https://www.googleapis.com/auth/youtube.readonly"]
 
     # Get credentials and create an API client
@@ -36,14 +36,14 @@ def set_up_youtube_tokens():
     with open(constants.YOUTUBE_AUTH_PICKLE, "wb") as creds:
         pickle.dump(credentials, creds)
 
-    with open("youtube_secrets.json", "w") as secrets:
+    with open(constants.YOUTUBE_SECRETS, "w") as secrets:
         json.dump(youtube_tokens, secrets)
 
 def set_up_spotify_token():
-    if not os.path.isfile("spotify_client_secrets.json"):
+    if not os.path.isfile(constants.SPOTIFY_CLIENT_SECRETS):
         return
 
-    with open("spotify_client_secrets.json") as f:
+    with open(constants.SPOTIFY_CLIENT_SECRETS) as f:
         spotify_client_tokens = json.load(f)
 
     scope = "playlist-modify-public"
@@ -70,10 +70,10 @@ def set_up_spotify_token():
         "refresh_token": token_info["refresh_token"]
     }
 
-    with open("spotify_auth.pickle", "wb") as creds:
+    with open(constants.SPOTIFY_AUTH_PICKLE, "wb") as creds:
         pickle.dump(sp_oauth, creds)
 
-    with open("spotify_secrets.json", "w") as secrets:
+    with open(constants.SPOTIFY_SECRETS, "w") as secrets:
         json.dump(spotify_tokens, secrets)
 
 if __name__ == "__main__":

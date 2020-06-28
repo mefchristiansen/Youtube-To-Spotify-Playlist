@@ -15,13 +15,14 @@ class YoutubeClient:
         self.api_service_name = "youtube"
         self.api_version = "v3"
         self.credentials = self.init_credentials()
-        self.client = self.init_youtube_client()        
+        # self.client = self.init_youtube_client()        
 
     def init_credentials(self):
         if not os.path.isfile(constants.YOUTUBE_AUTH_PICKLE):
+            print("[ERROR] Youtube auth pickle file does exist. Please run the set up script (set_up.py) first.")
             return
 
-        with open(constants.YOUTUBE_AUTH_PICKLE) as creds:
+        with open(constants.YOUTUBE_AUTH_PICKLE, "rb") as creds:
             return pickle.load(creds)
 
     def init_youtube_client(self):
@@ -42,7 +43,7 @@ class YoutubeClient:
         with open(constants.YOUTUBE_AUTH_PICKLE, "wb") as creds:
             pickle.dump(self.credentials, creds)
 
-        with open("youtube_secrets.json", "w") as secrets:
+        with open(constants.YOUTUBE_SECRETS, "w") as secrets:
             json.dump(youtube_tokens, secrets)
 
         self.client = build(

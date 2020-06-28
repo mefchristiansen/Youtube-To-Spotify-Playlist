@@ -9,16 +9,17 @@ def main():
     youtube_client = YoutubeClient()
     spotify_client = SpotifyClient()
 
-    # Refresh access tokens for both clients
+    # Refresh tokens for both clients
     youtube_client.refresh()
     spotify_client.refresh()
 
-    # Get Spotify Playlist
+    # Get Spotify playlist id
     playlist_id = spotify_client.get_playlist()
 
-    # Get uris of tracks already in playlist
+    # Get uris of tracks already in the Spotify playlist
     existing_track_uris = spotify_client.get_existing_tracks(playlist_id)
 
+    # Get first page of Youtube liked videos
     res = youtube_client.get_liked_videos()
 
     while res:
@@ -33,10 +34,14 @@ def main():
                 existing_track_uris
             )
         except spotipy.exceptions.SpotifyException as err:
+            # Catch Spotify client error
             if err.http_status == 401 and 'access token expired' in err.msg:
+                # If the access token has expired, refresh it and continue
                 spotify_client.refresh()
                 continue
             else:
+                print("[ERROR] There was an unexpected error with the Spotify client.")
+                print(err)
                 break
 
         if 'nextPageToken' not in res:
