@@ -2,5 +2,6 @@ YoutubeToSpotifyEnv/
 __pycache__/
 config.yml
 .envrc
-client_secret.json
+*_client_secrets.json
 *_secrets.json
+*.pickle
