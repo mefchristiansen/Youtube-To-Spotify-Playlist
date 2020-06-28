@@ -15,7 +15,7 @@ class YoutubeClient:
         self.api_service_name = "youtube"
         self.api_version = "v3"
         self.credentials = self.init_credentials()
-        # self.client = self.init_youtube_client()        
+        self.client = self.init_youtube_client()        
 
     def init_credentials(self):
         if not os.path.isfile(constants.YOUTUBE_AUTH_PICKLE):
