@@ -56,12 +56,13 @@ def main():
             break
 
         # Get next page of liked Youtube videos
+        # Youtube client will refresh itself automatically (if refresh token present in credentials)
         try:
             res = youtube_client.get_liked_videos(res['nextPageToken'])
-        except:
-            pass
-            # youtube_client.refresh()
-            # continue
+        except Exception as err:
+            print("[ERROR] There was an unexpected error with the Youtube client.")
+            print(err)
+            break
 
     return
 
