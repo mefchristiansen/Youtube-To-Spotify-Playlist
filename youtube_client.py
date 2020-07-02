@@ -10,6 +10,8 @@ from youtube_dl import YoutubeDL
 
 import constants
 
+from ssm_parameter_store import SSMParameterStore
+
 class YoutubeClient:
     def __init__(self):
         self.api_service_name = "youtube"
@@ -18,12 +20,27 @@ class YoutubeClient:
         self.client = self.init_youtube_client()        
 
     def init_credentials(self):
-        if not os.path.isfile(constants.YOUTUBE_AUTH_PICKLE):
-            print("[ERROR] Youtube auth pickle file does exist. Please run the set up script (set_up.py) first.")
-            return
+        if os.environ.get('ENV') == "production":
+            youtube_secrets = SSMParameterStore(prefix="/YoutubeToSpotify/Prod/Youtube")
 
-        with open(constants.YOUTUBE_AUTH_PICKLE, "rb") as creds:
-            return pickle.load(creds)
+            scopes = ["https://www.googleapis.com/auth/youtube.readonly"]
+
+            return Credentials (
+                token=youtube_secrets["access_token"],
+                refresh_token=youtube_secrets["refresh_token"],
+                token_uri=youtube_secrets["token_uri"],
+                client_id=youtube_secrets["client_id"],
+                client_secret=youtube_secrets["client_secret"],
+                scopes=scopes
+            )
+
+        else:
+            if not os.path.isfile(constants.YOUTUBE_AUTH_PICKLE):
+                print("[ERROR] Youtube auth pickle file does exist. Please run the set up script (set_up.py) first.")
+                return
+
+            with open(constants.YOUTUBE_AUTH_PICKLE, "rb") as creds:
+                return pickle.load(creds)
 
     def init_youtube_client(self):
         return build(

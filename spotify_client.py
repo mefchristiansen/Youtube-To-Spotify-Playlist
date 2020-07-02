@@ -1,11 +1,12 @@
 import os, json, pickle
-
 from urllib.error import HTTPError
 
 import spotipy
 from spotipy import oauth2
 
 import constants
+
+from ssm_parameter_store import SSMParameterStore
 
 class SpotifyClient:
     def __init__(self):
@@ -14,21 +15,39 @@ class SpotifyClient:
         self.client = self.init_spotify_client()
 
     def init_spotify_oauth(self):
-        if not os.path.isfile(constants.SPOTIFY_AUTH_PICKLE):
-            print("[ERROR] Spotify auth pickle file does exist. Please run the set up script (set_up.py) first.")
-            return
+        if os.environ.get('ENV') == "production":
+            spotify_secrets = SSMParameterStore(prefix='/YoutubeToSpotify/Prod/Spotify')
 
-        with open(constants.SPOTIFY_AUTH_PICKLE, "rb") as creds:
-            return pickle.load(creds)
+            scope = "playlist-modify-public"
+
+            return oauth2.SpotifyOAuth(
+                client_id=spotify_secrets["client_id"],
+                client_secret=spotify_secrets["client_secret"],
+                redirect_uri=spotify_secrets["redirect_uri"],
+                scope=scope
+            )
+
+        else:
+            if not os.path.isfile(constants.SPOTIFY_AUTH_PICKLE):
+                print("[ERROR] Spotify auth pickle file does exist. Please run the set up script (set_up.py) first.")
+                return
+
+            with open(constants.SPOTIFY_AUTH_PICKLE, "rb") as creds:
+                return pickle.load(creds)
 
     def init_spotify_client(self):
-        if not os.path.isfile(constants.SPOTIFY_SECRETS):
-            return
+        if os.environ.get('ENV') == "production":
+            spotify_secrets = SSMParameterStore(prefix='/YoutubeToSpotify/Prod/Spotify')
+            return spotipy.Spotify(auth=spotify_secrets["access_token"])
 
-        with open(constants.SPOTIFY_SECRETS) as f:
-            spotify_secrets = json.load(f)
+        else:
+            if not os.path.isfile(constants.SPOTIFY_SECRETS):
+                return
 
-        return spotipy.Spotify(auth=spotify_secrets["access_token"])
+            with open(constants.SPOTIFY_SECRETS) as f:
+                spotify_secrets = json.load(f)
+
+            return spotipy.Spotify(auth=spotify_secrets["access_token"])
 
     def refresh(self):
         if not os.path.isfile(constants.SPOTIFY_SECRETS):

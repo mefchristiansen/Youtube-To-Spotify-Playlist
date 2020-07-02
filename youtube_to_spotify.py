@@ -6,6 +6,12 @@ from youtube_client import YoutubeClient
 from spotify_client import SpotifyClient
 
 def main():
+    env = os.environ.get('ENV')
+        
+    if env not in ['development', 'production']:
+        print("[ERROR] Invalid environment.")
+        return
+
     youtube_client = YoutubeClient()
     spotify_client = SpotifyClient()
 
