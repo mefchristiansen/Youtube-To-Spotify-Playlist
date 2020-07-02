@@ -30,7 +30,10 @@ def set_up_youtube_tokens():
 
     youtube_tokens = {
         "access_token": credentials.token,
-        "refresh_token": credentials.refresh_token
+        "refresh_token": credentials.refresh_token,
+        "token_uri": credentials.token_uri,
+        "client_id": credentials.client_id,
+        "client_secret": credentials.client_secret
     }
 
     with open(constants.YOUTUBE_AUTH_PICKLE, "wb") as creds:
@@ -67,7 +70,10 @@ def set_up_spotify_token():
 
     spotify_tokens = {
         "access_token": token_info["access_token"],
-        "refresh_token": token_info["refresh_token"]
+        "refresh_token": token_info["refresh_token"],
+        "client_id": spotify_client_tokens["client_id"],
+        "client_secret": spotify_client_tokens["client_secret"],
+        "redirect_uri": spotify_client_tokens["redirect_uri"]
     }
 
     with open(constants.SPOTIFY_AUTH_PICKLE, "wb") as creds:
