@@ -76,6 +76,9 @@ class YoutubeClient:
         if env == "production":
             youtube_dl_outtmpl['outtmpl'] = "/tmp/%(id)s%(ext)s"
 
+        print("OUTTMPL")
+        print(youtube_dl_outtmpl)
+
         for item in response["items"]:            
             if item["id"] == recent_video_id:
                 already_processed = True
@@ -86,7 +89,7 @@ class YoutubeClient:
             )
 
             try:
-                video = YoutubeDL(youtube_dl_outtmpl).extract_info(
+                video = YoutubeDL({'outtmpl': '/tmp/%(id)s%(ext)s'}).extract_info(
                     youtube_url,
                     download=False
                 )
