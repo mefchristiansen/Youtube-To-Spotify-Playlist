@@ -20,6 +20,13 @@ Resources:
                     ENV: production
             Layers:
                 - !Ref YoutubeToSpotifyHelperLayer
+            Events:
+                ScheduledRunEvent:
+                    Type: Schedule
+                    Properties:
+                        Schedule: rate(1 hour)
+                        Description: Hourly execution
+                        Enabled: False
 
     YoutubeToSpotifyHelperLayer:
         Type: AWS::Serverless::LayerVersion

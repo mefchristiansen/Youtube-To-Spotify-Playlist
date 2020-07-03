@@ -31,10 +31,8 @@ def main():
 
     # Get recent video id
     print("[NOTICE] Get most recent video id.")
-    # recent_video_id = youtube_client.get_recent_video_id()
+    recent_video_id = youtube_client.get_recent_video_id()
     recent_video_id_updated = False
-
-    recent_video_id = 'BcsfftwLUf0'
 
     # Get first page of Youtube liked videos
     res = youtube_client.get_liked_videos()
@@ -45,6 +43,7 @@ def main():
 
         # Add songs to playlist
         try:
+            print("[NOTICE] Adding songs to Spotify playlist.")
             spotify_client.add_songs_to_playlist(
                 songs,
                 playlist_id,
