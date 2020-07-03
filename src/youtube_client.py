@@ -70,6 +70,12 @@ class YoutubeClient:
         valid_songs = []
         already_processed = False
 
+        youtube_dl_outtmpl = {}
+
+        env = os.environ.get('ENV')
+        if env == "production":
+            youtube_dl_outtmpl['outtmpl'] = "/tmp/%(id)s%(ext)s"
+
         for item in response["items"]:            
             if item["id"] == recent_video_id:
                 already_processed = True
@@ -80,7 +86,10 @@ class YoutubeClient:
             )
 
             try:
-                video = YoutubeDL({}).extract_info(youtube_url, download=False)
+                video = YoutubeDL(youtube_dl_outtmpl).extract_info(
+                    youtube_url,
+                    download=False
+                )
             except:
                 continue
 
