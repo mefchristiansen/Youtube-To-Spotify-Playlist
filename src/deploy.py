@@ -38,10 +38,20 @@ def set_up_spotify_secrets():
     for key, value in spotify_secrets.items():
         write_parameter("Spotify", key, value)
 
-def deploy_lambda():
+def create_s3_bucket():
+    s3_client = boto3.client('s3')
+
+    bucket_name = "youtube-to-spotify"
+
+    s3_client.create_bucket(
+        Bucket=bucket_name
+    )
+
+def deploy_lambda():    
     return
 
 def deploy():
     set_up_youtube_secrets()
     set_up_spotify_secrets()
+    create_s3_bucket()
     deploy_lambda()
