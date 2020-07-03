@@ -6,3 +6,4 @@ config.yml
 *_secrets.json
 layers/
 packaged.yaml
+samconfig.toml
