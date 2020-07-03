@@ -6,3 +6,4 @@ config.yml
 *_secrets.json
 *.pickle
 layers/
+packaged.yaml
