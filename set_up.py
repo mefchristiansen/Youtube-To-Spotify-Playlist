@@ -5,7 +5,7 @@ from googleapiclient.discovery import build
 
 from spotipy import oauth2
 
-import constants
+import src.constants
 
 def main():
     set_up_youtube_tokens()
