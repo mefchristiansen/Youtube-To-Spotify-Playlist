@@ -5,3 +5,4 @@ config.yml
 *_client_secrets.json
 *_secrets.json
 *.pickle
+layers/
