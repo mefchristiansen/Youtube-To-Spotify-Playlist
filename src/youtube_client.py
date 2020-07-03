@@ -22,28 +22,16 @@ class YoutubeClient:
         self._client = self._init_youtube_client()
 
     def _init_credentials(self):
-        env = os.environ.get('ENV')
+        youtube_secrets = self._parameter_store.get_secrets()
 
-        if env == "production":
-            youtube_secrets = self._parameter_store.get_secrets()
-
-            return Credentials (
-                token=youtube_secrets.get("access_token"),
-                refresh_token=youtube_secrets.get("refresh_token"),
-                token_uri=youtube_secrets.get("token_uri"),
-                client_id=youtube_secrets.get("client_id"),
-                client_secret=youtube_secrets.get("client_secret"),
-                scopes=self._scopes
-            )
-
-        else:
-            if not os.path.isfile(constants.YOUTUBE_AUTH_PICKLE):
-                print("[ERROR] Youtube auth pickle file does exist. " \
-                      "Please run the set up script (set_up.py) first.")
-                return
-
-            with open(constants.YOUTUBE_AUTH_PICKLE, "rb") as creds:
-                return pickle.load(creds)
+        return Credentials (
+            token=youtube_secrets.get("access_token"),
+            refresh_token=youtube_secrets.get("refresh_token"),
+            token_uri=youtube_secrets.get("token_uri"),
+            client_id=youtube_secrets.get("client_id"),
+            client_secret=youtube_secrets.get("client_secret"),
+            scopes=self._scopes
+        )
 
     def _init_youtube_client(self):
         return build(

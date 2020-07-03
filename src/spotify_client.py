@@ -16,26 +16,14 @@ class SpotifyClient:
         self._client = self._init_spotify_client()
 
     def _init_spotify_oauth(self):
-        env = os.environ.get('ENV')
+        spotify_secrets = self._parameter_store.get_secrets()
 
-        if env == "production":
-            spotify_secrets = self._parameter_store.get_secrets()
-
-            return oauth2.SpotifyOAuth(
-                client_id=spotify_secrets.get("client_id"),
-                client_secret=spotify_secrets.get("client_secret"),
-                redirect_uri=spotify_secrets.get("redirect_uri"),
-                scope=self._scope
-            )
-
-        else:
-            if not os.path.isfile(constants.SPOTIFY_AUTH_PICKLE):
-                print("[ERROR] Spotify auth pickle file does exist. " \
-                      "Please run the set up script (set_up.py) first.")
-                return
-
-            with open(constants.SPOTIFY_AUTH_PICKLE, "rb") as creds:
-                return pickle.load(creds)
+        return oauth2.SpotifyOAuth(
+            client_id=spotify_secrets.get("client_id"),
+            client_secret=spotify_secrets.get("client_secret"),
+            redirect_uri=spotify_secrets.get("redirect_uri"),
+            scope=self._scope
+        )
 
     def _init_spotify_client(self):
         spotify_secrets = self._parameter_store.get_secrets()

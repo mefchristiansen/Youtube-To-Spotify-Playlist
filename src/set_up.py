@@ -36,9 +36,6 @@ def set_up_youtube_tokens():
         "client_secret": credentials.client_secret
     }
 
-    with open(constants.YOUTUBE_AUTH_PICKLE, "wb") as creds:
-        pickle.dump(credentials, creds)
-
     with open(constants.YOUTUBE_SECRETS, "w") as secrets:
         json.dump(youtube_tokens, secrets)
 
@@ -75,9 +72,6 @@ def set_up_spotify_token():
         "client_secret": spotify_client_tokens["client_secret"],
         "redirect_uri": spotify_client_tokens["redirect_uri"]
     }
-
-    with open(constants.SPOTIFY_AUTH_PICKLE, "wb") as creds:
-        pickle.dump(sp_oauth, creds)
 
     with open(constants.SPOTIFY_SECRETS, "w") as secrets:
         json.dump(spotify_tokens, secrets)
