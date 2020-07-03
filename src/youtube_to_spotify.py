@@ -32,7 +32,7 @@ def main():
     # Get recent video id
     print("[NOTICE] Get most recent video id.")
     # recent_video_id = youtube_client.get_recent_video_id()
-    # recent_video_id_updated = False
+    recent_video_id_updated = False
 
     recent_video_id = 'BcsfftwLUf0'
 
