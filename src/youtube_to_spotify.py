@@ -58,6 +58,8 @@ def main():
                 print("[ERROR] There was an unexpected error with the Spotify client.")
                 print(err)
                 break
+        except:
+            break
 
         if not recent_video_id_updated:
             youtube_client.store_recent_video_id(res["items"][0]["id"])
