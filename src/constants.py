@@ -1,3 +1,9 @@
+"""Constants
+
+Program constants
+
+"""
+
 import os
 
 SPOTIFY_CLIENT_SECRETS = os.path.join("secrets", "client_secrets", "spotify_client_secrets.json")

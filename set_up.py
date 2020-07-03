@@ -1,11 +1,17 @@
-import json, os, pickle
+"""Set Up script
+
+This script sets up the user's Youtube and Spotify credentials by guiding the
+user through the authorization of this app for both Youtube and Spotify.
+
+"""
+
+import json, os
 
 from google_auth_oauthlib.flow import Flow
-from googleapiclient.discovery import build
 
 from spotipy import oauth2
 
-import src.constants
+import src.constants as constants
 
 def main():
     set_up_youtube_tokens()
@@ -22,9 +28,11 @@ def set_up_youtube_tokens():
         redirect_uri="urn:ietf:wg:oauth:2.0:oob"
     )
 
+    # Get the authorization url and prompt the user to follow it
     auth_url, _ = flow.authorization_url(prompt="consent")
     print("Please go to this URL: {}".format(auth_url))
     code = input("Enter the authorization code: ")
+    
     flow.fetch_token(code=code)
     credentials = flow.credentials
 
@@ -57,12 +65,13 @@ def set_up_spotify_token():
 
     sp_oauth.show_dialog = True
 
+    # Get the authorization url and prompt the user to follow it
     auth_url = sp_oauth.get_authorize_url()
     print("Please go to this URL: {}".format(auth_url))
     response = input("Paste the above link into your browser, " \
     "then paste the redirect url here: ")
-
     code = sp_oauth.parse_response_code(response)
+
     token_info = sp_oauth.get_access_token(code, check_cache=False)
 
     spotify_tokens = {

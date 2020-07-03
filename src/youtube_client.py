@@ -1,6 +1,5 @@
-import os, json, pickle
+import os
 
-from google_auth_oauthlib.flow import Flow
 from googleapiclient.discovery import build
 import googleapiclient.errors
 from google.auth.transport.requests import Request
@@ -13,15 +12,27 @@ import constants
 from parameter_store import ParameterStore
 
 class YoutubeClient:
+    """
+        The Youtube client class used to interface with the Youtube API.
+    """
+
     def __init__(self):
         self._api_service_name = "youtube"
         self._api_version = "v3"
+        # The scopes of permissions request from the user
         self._scopes = ["https://www.googleapis.com/auth/youtube.readonly"]
+        # Parameter store to get and update Spotify secrets
         self._parameter_store = ParameterStore('Youtube', constants.YOUTUBE_SECRETS)
         self._credentials = self._init_credentials()
         self._client = self._init_youtube_client()
 
     def _init_credentials(self):
+        """
+            Instantiates and returns a Credentials object. This is used to
+            instantiate the Youtube API client, and to refresh the Youtube
+            access token on expiration.
+        """
+
         youtube_secrets = self._parameter_store.get_secrets()
 
         return Credentials (
@@ -34,6 +45,10 @@ class YoutubeClient:
         )
 
     def _init_youtube_client(self):
+        """
+            Instantiates and returns a Youtube API client.
+        """
+
         return build(
             self._api_service_name,
             self._api_version,
@@ -42,6 +57,10 @@ class YoutubeClient:
         )
 
     def refresh(self):
+        """
+            Refreshes the Youtube access token.
+        """
+
         self._credentials.refresh(Request())
 
         self._parameter_store.update_secrets({
@@ -56,6 +75,10 @@ class YoutubeClient:
         )
 
     def get_liked_videos(self, pageToken = None):
+        """
+            Returns the provided page of the user's liked Youtube videos 
+        """
+
         request = self._client.videos().list(
             part="snippet",
             maxResults=10,
@@ -67,6 +90,12 @@ class YoutubeClient:
         return request.execute()
 
     def get_valid_songs(self, response, recent_video_id):
+        """
+            Iterates through the provided liked videos response from the Youtube
+            API, and uses YoutubeDL to parse out the videos that are music
+            tracks.
+        """
+
         valid_songs = []
         already_processed = False
 
@@ -86,6 +115,7 @@ class YoutubeClient:
             )
 
             try:
+                # Get a Youtube video's info
                 video = YoutubeDL(ydl_opts).extract_info(
                     youtube_url,
                     download=False
@@ -97,6 +127,7 @@ class YoutubeClient:
             artist = video["artist"]
 
             if song_name and artist:
+                # If the video is a music track, add it to the valid songs array
                 valid_songs.append ({
                     "title": song_name,
                     "artist": artist
@@ -105,10 +136,18 @@ class YoutubeClient:
         return valid_songs, already_processed
 
     def store_recent_video_id(self, video_id):
+        """
+            Stores the video id of the most recently liked video.
+        """
+
         self._parameter_store.update_secrets({
             "recent_video_id": video_id
         })
 
     def get_recent_video_id(self):
+        """
+            Returns the video id of the most recently liked video.
+        """
+
         youtube_secrets = self._parameter_store.get_secrets()
         return youtube_secrets.get("recent_video_id")
