@@ -12,20 +12,25 @@ def main():
         print("[ERROR] Invalid environment.")
         return
 
+    print("[NOTICE] Init clients.")
     youtube_client = YoutubeClient()
     spotify_client = SpotifyClient()
 
     # Refresh tokens for both clients
+    print("[NOTICE] Refreshing clients.")
     youtube_client.refresh()
     spotify_client.refresh()
 
     # Get Spotify playlist id
+    print("[NOTICE] Get playlist id.")
     playlist_id = spotify_client.get_playlist()
 
     # Get uris of tracks already in the Spotify playlist
+    print("[NOTICE] Get existing track uris.")
     existing_track_uris = spotify_client.get_existing_tracks(playlist_id)
 
     # Get recent video id
+    print("[NOTICE] Get most recent video id.")
     recent_video_id = youtube_client.get_recent_video_id()
     recent_video_id_updated = False
 

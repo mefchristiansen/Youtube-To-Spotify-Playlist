@@ -49,13 +49,13 @@ class ParameterStore(object):
             return
 
     def write_parameter(self, key, value):
-        try:
-            self._ssm_client.put_parameter(
-                Name=f'{self._prefix}/{key}',
-                Value=value,
-                Type='SecureString',
-                Overwrite=True
-            )
-        except:
-            print(f"[ERROR] Error setting parameter ({self._prefix}/{key}).")
-            return
+        # try:
+        self._ssm_client.put_parameter(
+            Name=f'/YoutubeToSpotify/Prod/{self._prefix}/{key}',
+            Value=value,
+            Type='SecureString',
+            Overwrite=True
+        )
+        # except:
+        #     print(f"[ERROR] Error setting parameter ({self._prefix}/{key}).")
+        #     return

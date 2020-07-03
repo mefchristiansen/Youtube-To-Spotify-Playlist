@@ -8,10 +8,11 @@ Resources:
       FunctionName: YoutubeToSpotify
       Description: Youtube to Spotify main function
       Role: arn:aws:iam::079866621733:role/YoutubeToSpotify
-      CodeUri: s3://youtube-to-spotify/lambda-templates/youtube-to-spotify/58b2aa88829f77deab6e9dad3b203657
+      CodeUri: s3://youtube-to-spotify/lambda-templates/youtube-to-spotify/cb2be61418ba72836cd7579b435e63e8
       Handler: main.handler
       Runtime: python3.7
       Timeout: 900
+      MemorySize: 256
       Environment:
         Variables:
           ENV: production

@@ -9,7 +9,7 @@ ssm_client = boto3.client('ssm')
 def write_parameter(prefix, key, value):
     try:
         ssm_client.put_parameter(
-            Name=f'{prefix}/{key}',
+            Name=f'/YoutubeToSpotify/Prod/{prefix}/{key}',
             Value=value,
             Type='SecureString',
             Overwrite=True
