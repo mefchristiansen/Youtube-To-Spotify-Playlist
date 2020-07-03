@@ -37,7 +37,8 @@ class YoutubeClient:
         return build(
             self._api_service_name,
             self._api_version,
-            credentials=self._credentials
+            credentials=self._credentials,
+            cache_discovery=False
         )
 
     def refresh(self):
