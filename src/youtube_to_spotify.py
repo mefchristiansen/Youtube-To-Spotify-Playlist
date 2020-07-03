@@ -39,6 +39,7 @@ def main():
 
     while res:
         # Get Youtube Valid Songs
+        print("[NOTICE] Getting valid Youtube songs.")
         songs, already_processed = youtube_client.get_valid_songs(res, recent_video_id)
 
         # Add songs to playlist

@@ -107,6 +107,7 @@ class YoutubeClient:
 
         for item in response["items"]:            
             if item["id"] == recent_video_id:
+                print("[NOTICE] Reached already processed video.")
                 already_processed = True
                 break
 

@@ -5,9 +5,12 @@ Program constants
 """
 
 import os
+from pathlib import Path
 
-SPOTIFY_CLIENT_SECRETS = os.path.join("secrets", "client_secrets", "spotify_client_secrets.json")
-YOUTUBE_CLIENT_SECRETS = os.path.join("secrets", "client_secrets", "youtube_client_secrets.json")
+file_path = Path(__file__).parent.absolute()
 
-SPOTIFY_SECRETS = os.path.join("secrets", "secrets", "spotify_secrets.json")
-YOUTUBE_SECRETS = os.path.join("secrets", "secrets", "youtube_secrets.json")
+YOUTUBE_CLIENT_SECRETS = file_path / Path("secrets/client-secrets/youtube_client_secrets.json")
+SPOTIFY_CLIENT_SECRETS = file_path / Path("secrets/client-secrets/spotify_client_secrets.json")
+
+YOUTUBE_SECRETS = file_path / Path("secrets/secrets/youtube_secrets.json")
+SPOTIFY_SECRETS = file_path / Path("secrets/secrets/spotify_secrets.json")
