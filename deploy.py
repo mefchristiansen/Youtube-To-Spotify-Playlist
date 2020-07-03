@@ -81,7 +81,12 @@ def rebuild_layer():
 
     copy_tree(src, dest)
 
-    shutil.make_archive("layers/youtube-to-spotify-helper-layer/function", 'zip', dest)
+    shutil.make_archive(
+        "layers/youtube-to-spotify-helper-layer/function",
+        'zip',
+        "layers/youtube-to-spotify-helper-layer/",
+        "python"
+    )
 
 def deploy_lambda():
     print("[NOTICE] Deploy Lambda function.")   
