@@ -19,6 +19,10 @@ class ParameterStore(object):
             return self._ssm_parameter_store
         elif env == "development":
             if not os.path.isfile(self._secrets_file):
+                print(
+                    f"[ERROR] The {self._prefix} secrets file does exist. " \
+                    "Please run the set up script (set_up.py) first."
+                )
                 return
 
             with open(self._secrets_file) as secrets_file:
