@@ -2,8 +2,6 @@ YoutubeToSpotifyEnv/
 __pycache__/
 config.yml
 .envrc
-*_client_secrets.json
-*_secrets.json
 layers/
 packaged.yaml
 samconfig.toml
