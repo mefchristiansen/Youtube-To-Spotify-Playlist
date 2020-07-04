@@ -39,11 +39,11 @@ After having gotten the Youtube and Spotify credentials, run the setup script `s
 
 ## Run
 
-To run the script locally, run the script `src/youtube_to_spotify.py`. This will populate a new Spotify playlist with your Youtube liked songs. You will need to run the set up script (as stated above) before you run this script.
+To run the script locally, run the script `src/youtube_to_spotify.py`. This will populate a new Spotify playlist (titled "Youtube Liked Songs") with your Youtube liked songs. You will need to run the set up script (as stated above) before you run this script.
 
 ## Deploy
 
-Before deploying to AWS Lambda, I recommend you run the `src/youtube_to_spotify.py` script first. Due to the maximum execution time of 15 minutes, if you have above 1000 liked videos on Youtube, the script will not be able to process all the liked videos. If you run the script locally first and then deploy to AWS, the already processed videos will be recorded and the Lambda function will only process newly liked videos.
+Before deploying to AWS Lambda, I recommend you run the `src/youtube_to_spotify.py` script locally first. Due to the maximum execution time of 15 minutes, if you have above 1000 liked videos on Youtube, the script will not be able to process all the liked videos. If you run the script locally first and then deploy to AWS, the already processed videos will be recorded and the Lambda function will only process newly liked videos.
 
 ### AWS Role
 
@@ -52,7 +52,7 @@ In order to run, the Lambda function requires basic permissions.
 Create a new role titled: "YoutubeToSpotify", with the following policies:
 - AWSLambdaExecute
 - AWSLambdaBasicExecutionRole
-- A custom policy titled to access and edit AWS SSM Paramter Store with following structure:
+- A custom policy to enabled access and edit permissions to AWS SSM Paramter Store with the following structure:
 
 ```json
 
