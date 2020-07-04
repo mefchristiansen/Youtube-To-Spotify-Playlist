@@ -96,4 +96,4 @@ After the script successfully executes, the Lambda function will run on a schedu
 
 ## Limitations
 
-This project uses https://github.com/ytdl-org/youtube-dl to extract a video's information to determine if it is a song or not, and Spotify's Web API to see if the corresponding track exists on Spotify. Be aware that the results are not always perfect, as videos that are songs may be missed, the incorrect title or artist is parsed from the video, the song may not exist on Spotify, or the Spotify API may match the video with the wrong track.
+This project uses [Youtube DL](https://github.com/ytdl-org/youtube-dl) to extract a video's information to determine if it is a song or not, and Spotify's Web API to see if the corresponding track exists on Spotify. Be aware that the results are not always perfect, as videos that are songs may be missed, the incorrect title or artist is parsed from the video, the song may not exist on Spotify, or the Spotify API may match the video with the wrong track.
