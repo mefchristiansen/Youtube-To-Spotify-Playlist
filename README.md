@@ -35,7 +35,7 @@ Essentially what you want to do is to create a new app, whitelist the URI `http:
 
 ### 4. Set Up Script
 
-After having gotten the Youtube and Spotify credentials, run the setup script `set_up.py` and follow the instructions in the terminal to set up both the Youtube and Spotify clients.
+After having gotten the Youtube and Spotify credentials, run the setup script `setup.py` and follow the instructions in the terminal to set up both the Youtube and Spotify clients.
 
 ## Run
 
