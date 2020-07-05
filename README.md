@@ -1,5 +1,7 @@
 # Youtube to Spotify Playlist
 
+> See here for a quick write up of the project: https://mefchristiansen.github.io/projects/youtube-to-spotify/
+
 <br>
 
 A Python script that converts your Youtube liked videos into a Spotify playlist.
