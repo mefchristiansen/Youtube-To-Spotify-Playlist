@@ -184,8 +184,4 @@ class SpotifyClient:
             else:
                 playlist = None
 
-        return track_uris
-
-
-
-                
+        return track_uris     
